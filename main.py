@@ -29,6 +29,13 @@ def main() -> int:
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(TEXT + "\n")
+    # Read it back and refuse a corrupt write instead of shipping one:
+    # the file on disk must be exactly the text we meant to enter.
+    with open(path, "r", encoding="utf-8", newline="\n") as f:
+        written = f.read()
+    if written != TEXT + "\n":
+        print("error: entry.txt on disk does not match the entry text", file=sys.stderr)
+        return 1
     return 0
 
 
